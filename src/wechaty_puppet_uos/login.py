@@ -23,7 +23,7 @@ async def login(self: PuppetUOS,):
     if self.alive:
         log.warning('已登录，无需重复登陆')
         return
-    while True:
+    while True:pass
 async def push_login(self: PuppetUOS):
     cookies = self.session.cookie_jar.filter_cookies()
     if 'wxuin' in cookies:
@@ -34,5 +34,15 @@ async def push_login(self: PuppetUOS):
                 self.uuid = r["uuid"]
                 return r["uuid"]
     return False
+async def push_login(self):
+    cookies = self.session.cookie_jar.filter_cookies()
+    if 'wxuin' in cookies:
+        url = f'{BASE_URL}/cgi-bin/mmwebwx-bin/webwxpushloginurl?uin={cookies["wxuin"]}'
+        async with self.session.get(url).json() as r:
+            if 'uuid' in r and r.get('ret') in (0, '0'):
+                self.uuid = r['uuid']
+                return r['uuid']
+    return False
+
 
 
